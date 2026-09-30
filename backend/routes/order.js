@@ -77,8 +77,10 @@ router.post('/create', (req, res) => {
       insertItem.run(transactionId, item.slotId, item.quantity, item.unitPrice);
     }
 
-    // Dynamic UPI QR string
-    const upiString = `upi://pay?pa=aerovend@upi&pn=AeroVendKiosk&mc=5499&tid=${transactionId}&tr=${transactionId}&am=${totalAmount.toFixed(2)}&cu=INR&tn=Order_${transactionId}`;
+    // Dynamic real-world UPI QR string for abikrishnakb@okicici
+    const payeeVpa = process.env.UPI_ID || 'abikrishnakb@okicici';
+    const payeeName = process.env.UPI_PAYEE_NAME || 'Abi Krishna';
+    const upiString = `upi://pay?pa=${payeeVpa}&pn=${encodeURIComponent(payeeName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Order_${transactionId}`)}&tr=${transactionId}`;
 
     res.json({
       success: true,
@@ -88,6 +90,8 @@ router.post('/create', (req, res) => {
       items: validatedItems,
       payment: {
         method: 'UPI',
+        upiId: payeeVpa,
+        payeeName,
         qrPayload: upiString,
         timeoutSeconds: 60
       }
@@ -134,7 +138,10 @@ router.post('/direct-pay', (req, res) => {
       VALUES (?, ?, 1, ?, 'PENDING')
     `).run(transactionId, slot.slot_id, slot.price);
 
-    const upiString = `upi://pay?pa=aerovend@upi&pn=AeroVendKiosk&mc=5499&tid=${transactionId}&tr=${transactionId}&am=${totalAmount.toFixed(2)}&cu=INR&tn=DirectPay_${transactionId}`;
+    // Dynamic real-world UPI QR string for abikrishnakb@okicici
+    const payeeVpa = process.env.UPI_ID || 'abikrishnakb@okicici';
+    const payeeName = process.env.UPI_PAYEE_NAME || 'Abi Krishna';
+    const upiString = `upi://pay?pa=${payeeVpa}&pn=${encodeURIComponent(payeeName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`DirectPay_${transactionId}`)}&tr=${transactionId}`;
 
     res.json({
       success: true,
@@ -150,6 +157,8 @@ router.post('/direct-pay', (req, res) => {
       },
       payment: {
         method: 'UPI',
+        upiId: payeeVpa,
+        payeeName,
         qrPayload: upiString,
         timeoutSeconds: 60
       }

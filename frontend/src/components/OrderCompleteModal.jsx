@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { ShoppingBag, ArrowDownCircle, CheckCircle, Sparkles } from 'lucide-react';
 import { sounds } from '../utils/soundEffects';
@@ -7,6 +7,11 @@ export default function OrderCompleteModal({
   onDismiss
 }) {
   const [secondsRemaining, setSecondsRemaining] = useState(7);
+  const onDismissRef = useRef(onDismiss);
+
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
 
   useEffect(() => {
     // Launch celebratory confetti burst
@@ -20,19 +25,18 @@ export default function OrderCompleteModal({
       // ignore
     }
 
+    const endTime = Date.now() + 7 * 1000;
     const timer = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onDismiss();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      setSecondsRemaining(remaining);
+      if (remaining <= 0) {
+        clearInterval(timer);
+        onDismissRef.current?.();
+      }
+    }, 250);
 
     return () => clearInterval(timer);
-  }, [onDismiss]);
+  }, []);
 
   const handleDone = () => {
     sounds.playTap();

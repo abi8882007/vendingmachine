@@ -43,22 +43,17 @@ export default function App() {
     fetchCatalog();
   }, [fetchCatalog]);
 
-  // Handle Inactivity Timer (45-second touch idle reset)
+  // Handle Inactivity Timer (45-second touch idle reset for cart on main screen)
   const handleInactivityReset = useCallback(() => {
-    // Only reset if not currently dispensing
-    if (activeModal === 'DISPENSING') return;
-
-    if (cartItems.length > 0 || activeModal === 'PAYMENT' || activeModal === 'NUMPAD') {
-      console.log('[Kiosk] 45s Inactivity reached. Auto-resetting tray.');
+    if (cartItems.length > 0) {
+      console.log('[Kiosk] 45s Inactivity reached. Auto-resetting cart.');
       setCartItems([]);
-      setActiveModal(null);
-      setCurrentOrder(null);
     }
-  }, [cartItems.length, activeModal]);
+  }, [cartItems.length]);
 
-  const { secondsRemaining: idleSecondsRemaining } = useInactivityTimer({
+  useInactivityTimer({
     timeoutSeconds: 45,
-    isActive: activeModal !== 'DISPENSING',
+    isActive: activeModal === null && cartItems.length > 0,
     onTimeout: handleInactivityReset
   });
 
@@ -205,18 +200,35 @@ export default function App() {
   };
 
   // Payment Confirmation Transition
-  const handlePaymentSuccess = (confirmedOrder) => {
-    // Switch immediately to Dispensing animation modal
+  const handlePaymentSuccess = useCallback((confirmedOrder) => {
     setActiveModal('DISPENSING');
-  };
+  }, []);
 
   // Dispensing Complete Transition
-  const handleDispenseComplete = () => {
-    // Clear cart and show Pick-Up Tray modal
+  const handleDispenseComplete = useCallback(() => {
     setCartItems([]);
     setActiveModal('ORDER_COMPLETE');
-    fetchCatalog(); // Refresh updated stock levels from SQLite
-  };
+    fetchCatalog();
+  }, [fetchCatalog]);
+
+  const handleClosePayment = useCallback(() => {
+    setActiveModal(null);
+    setCurrentOrder(null);
+  }, []);
+
+  const handleCloseNumpad = useCallback(() => {
+    setActiveModal(null);
+    setNumpadItem(null);
+  }, []);
+
+  const handleDismissOrderComplete = useCallback(() => {
+    setActiveModal(null);
+    setCurrentOrder(null);
+  }, []);
+
+  const handleCloseAdmin = useCallback(() => {
+    setActiveModal(null);
+  }, []);
 
   return (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -244,7 +256,6 @@ export default function App() {
           onOpenNumpad={handleOpenNumpad}
           onClearCart={handleClearCart}
           onProceedToCheckout={handleProceedToCheckout}
-          idleSecondsRemaining={idleSecondsRemaining}
         />
       </main>
 
@@ -253,7 +264,7 @@ export default function App() {
         <NumberPadModal
           item={numpadItem}
           onConfirm={handleConfirmNumpad}
-          onClose={() => { setActiveModal(null); setNumpadItem(null); }}
+          onClose={handleCloseNumpad}
         />
       )}
 
@@ -262,7 +273,7 @@ export default function App() {
         <PaymentModal
           orderData={currentOrder}
           onPaymentSuccess={handlePaymentSuccess}
-          onClose={() => { setActiveModal(null); setCurrentOrder(null); }}
+          onClose={handleClosePayment}
         />
       )}
 
@@ -278,14 +289,14 @@ export default function App() {
       {/* Order Complete / Pick-Up Tray Callout */}
       {activeModal === 'ORDER_COMPLETE' && (
         <OrderCompleteModal
-          onDismiss={() => { setActiveModal(null); setCurrentOrder(null); }}
+          onDismiss={handleDismissOrderComplete}
         />
       )}
 
       {/* Operator Diagnostics & Maintenance Modal */}
       {activeModal === 'ADMIN' && (
         <AdminPanelModal
-          onClose={() => setActiveModal(null)}
+          onClose={handleCloseAdmin}
           onCatalogRefresh={fetchCatalog}
         />
       )}

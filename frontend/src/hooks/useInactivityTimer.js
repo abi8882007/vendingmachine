@@ -12,14 +12,23 @@ export function useInactivityTimer({
   onTimeout
 }) {
   const [secondsRemaining, setSecondsRemaining] = useState(timeoutSeconds);
+  const onTimeoutRef = useRef(onTimeout);
   const timerRef = useRef(null);
+  const endTimeRef = useRef(Date.now() + timeoutSeconds * 1000);
+
+  useEffect(() => {
+    onTimeoutRef.current = onTimeout;
+  }, [onTimeout]);
 
   const resetTimer = useCallback(() => {
+    endTimeRef.current = Date.now() + timeoutSeconds * 1000;
     setSecondsRemaining(timeoutSeconds);
   }, [timeoutSeconds]);
 
   useEffect(() => {
     if (!isActive) return;
+
+    resetTimer();
 
     // Listen to all touch and interaction events across the entire window
     const events = ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown', 'click'];
@@ -32,14 +41,13 @@ export function useInactivityTimer({
     });
 
     timerRef.current = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev <= 1) {
-          if (onTimeout) onTimeout();
-          return timeoutSeconds;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const remaining = Math.max(0, Math.ceil((endTimeRef.current - Date.now()) / 1000));
+      setSecondsRemaining(remaining);
+      if (remaining <= 0) {
+        onTimeoutRef.current?.();
+        resetTimer();
+      }
+    }, 500);
 
     return () => {
       events.forEach((evt) => {
@@ -47,7 +55,7 @@ export function useInactivityTimer({
       });
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isActive, timeoutSeconds, onTimeout, resetTimer]);
+  }, [isActive, timeoutSeconds, resetTimer]);
 
   return { secondsRemaining, resetTimer };
 }

@@ -11,18 +11,35 @@ export default function PaymentModal({
   const { transactionId, totalAmount, payment, items = [] } = orderData;
   const qrCanvasRef = useRef(null);
 
-  const [secondsRemaining, setSecondsRemaining] = useState(payment?.timeoutSeconds || 60);
+  const totalTimeout = payment?.timeoutSeconds || 60;
+  const [secondsRemaining, setSecondsRemaining] = useState(totalTimeout);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  const targetUpiId = payment?.upiId || 'abikrishnakb@okicici';
+  const targetPayeeName = payment?.payeeName || 'Abi Krishna';
+  const formattedAmount = Number(totalAmount || 0).toFixed(2);
+
+  // Dynamic real-world NPCI UPI URL (Compatible with Google Pay, PhonePe, Paytm, BHIM, CRED)
+  const upiPayload = payment?.qrPayload && payment.qrPayload.includes(targetUpiId)
+    ? payment.qrPayload
+    : `upi://pay?pa=${targetUpiId}&pn=${encodeURIComponent(targetPayeeName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`Order_${transactionId}`)}&tr=${transactionId}`;
 
   // Generate crisp high-resolution UPI QR Code
   useEffect(() => {
-    if (qrCanvasRef.current && payment?.qrPayload) {
+    if (qrCanvasRef.current && upiPayload) {
       QRCode.toCanvas(
         qrCanvasRef.current,
-        payment.qrPayload,
+        upiPayload,
         {
           width: 260,
-          margin: 1,
+          margin: 2,
+          errorCorrectionLevel: 'M',
           color: {
             dark: '#0F172A',
             light: '#FFFFFF'
@@ -33,23 +50,34 @@ export default function PaymentModal({
         }
       );
     }
-  }, [payment?.qrPayload]);
+  }, [upiPayload]);
 
-  // 60-second Countdown Timer
+  // High-precision, drift-free Countdown Timer
   useEffect(() => {
+    const startTime = Date.now();
+    const endTime = startTime + totalTimeout * 1000;
+
+    setSecondsRemaining(totalTimeout);
+    setIsExpired(false);
+
     const timer = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onClose(); // Auto dismiss on timeout
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const now = Date.now();
+      const diffMs = endTime - now;
+      const secs = Math.max(0, Math.ceil(diffMs / 1000));
+
+      setSecondsRemaining(secs);
+
+      if (secs <= 0) {
+        clearInterval(timer);
+        setIsExpired(true);
+        setTimeout(() => {
+          onCloseRef.current?.();
+        }, 1200);
+      }
+    }, 250);
 
     return () => clearInterval(timer);
-  }, [onClose]);
+  }, [totalTimeout]);
 
   // Handle instant payment confirmation (Webhook simulation / trigger)
   const handleTriggerPayment = async () => {
@@ -86,7 +114,7 @@ export default function PaymentModal({
     }
   };
 
-  const progressPercent = (secondsRemaining / (payment?.timeoutSeconds || 60)) * 100;
+  const progressPercent = Math.max(0, Math.min(100, (secondsRemaining / totalTimeout) * 100));
 
   return (
     <div className="kiosk-modal-backdrop" onClick={onClose}>
@@ -143,12 +171,12 @@ export default function PaymentModal({
         </div>
 
         {/* 60s Timeout Progress Bar */}
-        <div style={{ height: '4px', background: '#E2E8F0', width: '100%' }}>
+        <div style={{ height: '5px', background: '#E2E8F0', width: '100%', overflow: 'hidden' }}>
           <div style={{
             height: '100%',
             width: `${progressPercent}%`,
-            background: progressPercent > 20 ? '#0066FF' : '#EF4444',
-            transition: 'width 1s linear'
+            background: secondsRemaining <= 10 ? '#EF4444' : secondsRemaining <= 20 ? '#F59E0B' : '#0066FF',
+            transition: 'width 0.25s linear, background-color 0.3s ease'
           }} />
         </div>
 
@@ -156,6 +184,7 @@ export default function PaymentModal({
         <div style={{ padding: '26px 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
           {/* QR Container */}
           <div style={{
+            position: 'relative',
             background: '#FFFFFF',
             padding: '16px',
             borderRadius: '20px',
@@ -163,9 +192,46 @@ export default function PaymentModal({
             boxShadow: '0 8px 24px rgba(0, 102, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            overflow: 'hidden'
           }}>
-            <canvas ref={qrCanvasRef} style={{ display: 'block', borderRadius: '12px' }} />
+            <canvas ref={qrCanvasRef} style={{ display: 'block', borderRadius: '12px', opacity: isExpired ? 0.3 : 1, transition: 'opacity 0.3s' }} />
+
+            {isExpired && (
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(255, 255, 255, 0.94)',
+                borderRadius: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}>
+                <span style={{ fontSize: '2rem' }}>⏱️</span>
+                <span style={{ fontWeight: 800, color: '#EF4444', fontSize: '1.1rem' }}>QR Code Expired</span>
+                <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>Closing payment window...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Real-World Payee Identification Badge */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: '#F0FDF4',
+            border: '1.5px solid #86EFAC',
+            padding: '8px 18px',
+            borderRadius: '9999px',
+            fontSize: '0.85rem',
+            color: '#15803D',
+            fontWeight: 700,
+            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.12)'
+          }}>
+            <CheckCircle2 size={16} color="#16A34A" strokeWidth={2.5} />
+            <span>Paying: <strong>{targetPayeeName}</strong> (<span style={{ fontFamily: 'monospace', color: '#0F172A' }}>{targetUpiId}</span>)</span>
           </div>
 
           {/* Amount Box */}
@@ -184,9 +250,20 @@ export default function PaymentModal({
                 ₹{totalAmount}
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#0066FF', fontWeight: 700 }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.85rem',
+              color: secondsRemaining <= 10 ? '#EF4444' : secondsRemaining <= 20 ? '#D97706' : '#0066FF',
+              fontWeight: 700,
+              padding: '6px 12px',
+              borderRadius: '10px',
+              background: secondsRemaining <= 10 ? '#FEE2E2' : secondsRemaining <= 20 ? '#FEF3C7' : '#EFF6FF',
+              transition: 'all 0.25s ease'
+            }}>
               <Clock size={16} />
-              <span>{secondsRemaining}s remaining</span>
+              <span>{isExpired ? 'Expired' : `${secondsRemaining}s remaining`}</span>
             </div>
           </div>
 

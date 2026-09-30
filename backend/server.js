@@ -103,9 +103,22 @@ app.use('/api/order', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/system', systemRoutes);
 
-// Health check root
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'AeroVend Kiosk Backend' });
+// Global Error Handler for Malformed JSON & Routes
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.warn('[Express] Malformed JSON payload received:', err.message);
+    return res.status(400).json({ success: false, error: 'Malformed JSON payload' });
+  }
+  console.error('[Express Error]', err);
+  res.status(500).json({ success: false, error: 'Internal server error' });
+});
+
+// Process-level safety
+process.on('uncaughtException', (err) => {
+  console.error('[Process UncaughtException]', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Process UnhandledRejection]', reason);
 });
 
 // Initialize database & hardware
