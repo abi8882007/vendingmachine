@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="100%" height="100%">
+      <defs>
+        <radialGradient id="mms_bg" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#FEF08A" />
+          <stop offset="50%" stop-color="#FACC15" />
+          <stop offset="100%" stop-color="#EAB308" />
+        </radialGradient>
+        <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <g filter="url(#shadow)">
+        <path d="M 45 40 Q 100 30 155 40 Q 165 110 155 180 Q 100 190 45 180 Q 35 110 45 40 Z" fill="url(#mms_bg)" />
+        <text x="100" y="96" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="20" font-weight="900" fill="#78350F" text-anchor="middle">m&amp;m's</text>
+        <text x="100" y="114" font-family="system-ui, sans-serif" font-size="9" font-weight="900" fill="#DC2626" text-anchor="middle">Peanut</text>
+        <!-- Peanut M&M characters -->
+        <ellipse cx="80" cy="148" rx="16" ry="12" fill="#DC2626" />
+        <text x="80" y="152" font-family="system-ui, sans-serif" font-size="9" font-weight="900" fill="#FFF" text-anchor="middle">m</text>
+        <ellipse cx="118" cy="145" rx="14" ry="14" fill="#3B82F6" />
+        <text x="118" y="149" font-family="system-ui, sans-serif" font-size="9" font-weight="900" fill="#FFF" text-anchor="middle">m</text>
+      </g>
+    </svg>

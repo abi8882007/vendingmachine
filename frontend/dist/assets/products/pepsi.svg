@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="100%" height="100%">
+      <defs>
+        <linearGradient id="pepsi_can" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#1E3A8A" />
+          <stop offset="35%" stop-color="#2563EB" />
+          <stop offset="70%" stop-color="#1D4ED8" />
+          <stop offset="100%" stop-color="#172554" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <g filter="url(#shadow)">
+        <ellipse cx="100" cy="40" rx="34" ry="10" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5" />
+        <ellipse cx="100" cy="40" rx="26" ry="6" fill="#94A3B8" />
+        <path d="M 66 40 L 66 170 Q 100 180 134 170 L 134 40 Z" fill="url(#pepsi_can)" />
+        <path d="M 76 42 L 76 168" stroke="#FFF" stroke-width="6" opacity="0.35" stroke-linecap="round" />
+        <!-- Pepsi Globe -->
+        <circle cx="100" cy="100" r="18" fill="#FFF" />
+        <path d="M 82 96 Q 100 84 118 96 A 18 18 0 0 0 82 96 Z" fill="#DC2626" />
+        <path d="M 82 104 Q 100 116 118 104 A 18 18 0 0 1 82 104 Z" fill="#2563EB" />
+        <text x="100" y="136" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="900" fill="#FFF" text-anchor="middle" letter-spacing="1">pepsi</text>
+      </g>
+    </svg>

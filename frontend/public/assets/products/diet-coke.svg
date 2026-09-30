@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad_diet-coke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64748B" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+    <linearGradient id="sheen_diet-coke" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
+    </linearGradient>
+    <filter id="shadow_diet-coke" x="-20%" y="-10%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Minimalist Platform Background -->
+  <rect width="240" height="240" rx="20" fill="#F8FAFC" />
+  <circle cx="120" cy="120" r="85" fill="#64748B" opacity="0.08" />
+
+  <!-- Render Form Factor with Rich 3D Styling -->
+  <g filter="url(#shadow_diet-coke)">
+    
+      <!-- Can Rim Top -->
+      <ellipse cx="120" cy="48" rx="48" ry="12" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="2"/>
+      <ellipse cx="120" cy="48" rx="40" ry="8" fill="#94A3B8"/>
+      <!-- Can Body -->
+      <rect x="72" y="48" width="96" height="142" rx="14" fill="url(#grad_diet-coke)" />
+      <!-- Specular Highlight Line -->
+      <rect x="80" y="52" width="12" height="134" rx="6" fill="#FFFFFF" opacity="0.25"/>
+      <!-- Brand Logo Ribbon -->
+      <rect x="72" y="95" width="96" height="48" fill="#FFFFFF" fill-opacity="0.18"/>
+      <text x="120" y="126" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">Diet Coke</text>
+      <!-- Subtitle -->
+      <text x="120" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" fill-opacity="0.9" text-anchor="middle" letter-spacing="0.5">330 ML</text>
+      <!-- Can Rim Bottom -->
+      <path d="M 78 190 Q 120 198 162 190" stroke="#CBD5E1" stroke-width="3" fill="none"/>
+    
+  </g>
+</svg>

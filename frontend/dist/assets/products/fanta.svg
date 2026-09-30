@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="100%" height="100%">
+      <defs>
+        <linearGradient id="fanta_can" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#C2410C" />
+          <stop offset="35%" stop-color="#FB923C" />
+          <stop offset="70%" stop-color="#F97316" />
+          <stop offset="100%" stop-color="#9A3412" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <g filter="url(#shadow)">
+        <ellipse cx="100" cy="40" rx="34" ry="10" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5" />
+        <ellipse cx="100" cy="40" rx="26" ry="6" fill="#94A3B8" />
+        <path d="M 66 40 L 66 170 Q 100 180 134 170 L 134 40 Z" fill="url(#fanta_can)" />
+        <path d="M 76 42 L 76 168" stroke="#FFF" stroke-width="6" opacity="0.35" stroke-linecap="round" />
+        <circle cx="100" cy="98" r="18" fill="#1D4ED8" />
+        <text x="100" y="103" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="900" fill="#FFF" text-anchor="middle">FANTA</text>
+        <!-- Green leaf -->
+        <path d="M 104 80 Q 115 76 112 88 Z" fill="#16A34A" />
+      </g>
+    </svg>

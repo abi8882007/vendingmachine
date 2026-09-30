@@ -1,0 +1,877 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   SNACK SPOT — Touch Kiosk UI Design System
+   Pixel-Accurate Recreation of the Snack Spot Vending Machine Interface
+   Theme: Friendly Light Sky-Blue (#EBF3FE), Crisp White Surfaces (#FFFFFF),
+   Vibrant Brand Blue (#0066FF), and High-Contrast Typography.
+   ========================================================================== */
+
+:root {
+  /* Theme Palette */
+  --bg-kiosk: #EBF3FE;
+  --bg-surface: #FFFFFF;
+  --bg-surface-soft: #F1F5F9;
+  --bg-surface-elevated: #F8FAFC;
+  --bg-banner: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(220, 240, 255, 0.85) 100%);
+  --bg-total: #F1F6FD;
+
+  /* Accent Colors */
+  --brand-blue: #0066FF;
+  --brand-blue-hover: #0052CC;
+  --brand-blue-soft: #EBF4FF;
+  --brand-red: #EF4444;
+  --brand-green: #00833F;
+  --brand-orange: #ED7026;
+
+  /* Typography */
+  --text-dark: #0F172A;
+  --text-slate: #334155;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+
+  /* Borders & Shadows */
+  --border-card: #E4ECF5;
+  --border-subtle: #E2E8F0;
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 10px 28px rgba(0, 102, 255, 0.09), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-btn: 0 6px 20px rgba(0, 102, 255, 0.35);
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   Base Touch Ergonomics & Kiosk Lock
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-kiosk);
+  color: var(--text-dark);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-kiosk);
+}
+
+button, .touch-btn {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active, .touch-btn:active {
+  transform: scale(0.96) !important;
+}
+
+/* Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+/* ==========================================================================
+   1. SNACK SPOT HEADER
+   ========================================================================== */
+.snackspot-header {
+  height: 108px;
+  min-height: 108px;
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  z-index: 30;
+}
+
+/* Brand Section (Left) */
+.snackspot-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vending-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.brand-word-snack {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #0F172A;
+  letter-spacing: -0.5px;
+}
+
+.brand-word-spot {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--brand-blue);
+  letter-spacing: -0.5px;
+}
+
+.sparkle-burst {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  animation: sparkle-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+  50% { transform: scale(1.15) rotate(12deg); opacity: 1; }
+}
+
+.brand-tagline {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: #0F172A;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Center Slogan Banner */
+.snackspot-center-banner {
+  flex: 1;
+  max-width: 680px;
+  margin: 0 24px;
+  height: 82px;
+  background: var(--bg-banner);
+  border-radius: 44px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.06);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.good-snacks {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--brand-blue);
+  letter-spacing: -0.3px;
+  transform: rotate(-2deg);
+}
+
+.brighter-days {
+  position: relative;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--brand-blue);
+  letter-spacing: -0.5px;
+}
+
+.smile-arc {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+}
+
+.banner-snacks-graphics {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 80px;
+  gap: 6px;
+}
+
+.banner-floating-item {
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.14));
+  transition: transform 0.3s ease;
+}
+
+.lays-float {
+  transform: rotate(-8deg);
+  z-index: 1;
+}
+
+.kitkat-float {
+  transform: rotate(6deg) translateY(6px);
+  z-index: 2;
+  margin-left: -14px;
+}
+
+.coke-float {
+  transform: rotate(4deg) translateY(-2px);
+  z-index: 3;
+  margin-left: -10px;
+}
+
+.crisp-flake {
+  position: absolute;
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+.flake-1 { top: 6px; right: -4px; }
+.flake-2 { bottom: 8px; right: 85px; }
+
+/* Right Section: Clock & Utility */
+.snackspot-header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.snackspot-clock-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.clock-time {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #0F172A;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.clock-date {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.header-utility-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   2. MASTER SPLIT-VIEW CONTAINER
+   ========================================================================== */
+.kiosk-main-container {
+  flex: 1;
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 108px);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   3. CATALOG SECTION & CATEGORY TABS
+   ========================================================================== */
+.snackspot-catalog-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Category Filter Tabs Bar */
+.snackspot-category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 28px 16px 28px;
+}
+
+.category-tab-btn {
+  height: 48px;
+  padding: 0 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 16px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  background: #FFFFFF;
+  color: var(--text-slate);
+  border: 1.5px solid #E2E8F0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.category-tab-btn:hover {
+  background: #F8FAFC;
+}
+
+.category-tab-btn.tab-active {
+  background: var(--brand-blue);
+  color: #FFFFFF;
+  border-color: var(--brand-blue);
+  box-shadow: var(--shadow-btn);
+}
+
+/* Products Grid Container */
+.snackspot-products-grid-container {
+  flex: 1;
+  padding: 0 16px 24px 28px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* 6-Column Grid */
+.snackspot-6col-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+}
+
+/* ==========================================================================
+   4. PRODUCT CARD (Pure White, Large Realistic Visuals, Stepper [-] [qty] [+])
+   ========================================================================== */
+.snack-product-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid var(--border-card);
+  padding: 14px 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  height: 310px;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.snack-product-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: #BFDBFE;
+}
+
+.snack-product-card.card-disabled {
+  opacity: 0.5;
+  filter: grayscale(0.8);
+  pointer-events: none;
+}
+
+/* Image Container */
+.product-image-container {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+}
+
+.product-packaging-img {
+  width: 100%;
+  height: 100%;
+  max-height: 155px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
+  transition: transform 0.2s ease;
+}
+
+.snack-product-card:hover .product-packaging-img {
+  transform: scale(1.06);
+}
+
+.card-sold-out-badge {
+  position: absolute;
+  bottom: 4px;
+  background: rgba(239, 68, 68, 0.9);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
+/* Product Info */
+.product-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 2px;
+}
+
+.product-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.product-price-tag {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.3px;
+}
+
+/* Stepper Bar at Card Bottom: [-] [qty] [+] */
+.card-stepper-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F1F5F9;
+  border-radius: 14px;
+  padding: 4px 6px;
+  margin-top: 6px;
+}
+
+.card-stepper-minus {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.card-stepper-minus:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.card-stepper-qty {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.card-stepper-plus {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.35);
+}
+
+.card-stepper-plus:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Empty products view */
+.no-products-view {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   5. CART SIDEBAR (Your Cart (N), Total Bar, UPI Only, Pay CTA)
+   ========================================================================== */
+.snackspot-cart-panel {
+  width: 410px;
+  min-width: 410px;
+  max-width: 410px;
+  background: #FFFFFF;
+  border-radius: 26px;
+  margin: 0 28px 24px 0;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 24px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(0, 102, 255, 0.05), 0 2px 10px rgba(0, 0, 0, 0.03);
+  position: relative;
+  z-index: 20;
+}
+
+/* Cart Header */
+.cart-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.cart-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-header-title h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.cart-clear-all-btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: #F1F5F9;
+  color: var(--text-slate);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-clear-all-btn:hover {
+  background: #E2E8F0;
+}
+
+/* Cart Items Scroll List */
+.cart-items-scroll-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  gap: 10px;
+}
+
+.empty-cart-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #F8FAFC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.empty-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.empty-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 210px;
+}
+
+/* Cart Item Row */
+.cart-item-row-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.cart-item-img-box {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cart-item-img-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.cart-item-middle-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0F172A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-unit-price {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-top: 1px;
+  margin-bottom: 6px;
+}
+
+/* Stepper inside Cart Item */
+.cart-item-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F1F5F9;
+  border-radius: 10px;
+  padding: 3px 8px;
+}
+
+.cart-stepper-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cart-stepper-btn.plus {
+  background: var(--brand-blue);
+  color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.cart-stepper-number {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0F172A;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Right column with red trash & subtotal */
+.cart-item-right-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.cart-delete-item-btn {
+  background: transparent;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-delete-item-btn:hover {
+  opacity: 0.8;
+}
+
+.cart-item-subtotal-price {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+/* Cart Footer */
+.cart-panel-footer {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Total Bar */
+.cart-total-summary-box {
+  background: var(--bg-total);
+  border-radius: 18px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.total-label {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-slate);
+}
+
+.total-value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #0F172A;
+  letter-spacing: -0.5px;
+}
+
+/* Pay Now Section — UPI Only */
+.pay-now-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pay-now-heading {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.payment-options-grid-upi-only {
+  display: flex;
+  gap: 12px;
+}
+
+.upi-payment-card {
+  flex: 1;
+  background: #FFFFFF;
+  border: 2px solid var(--brand-blue);
+  border-radius: 16px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 4px 14px rgba(0, 102, 255, 0.12);
+}
+
+.upi-text-label {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: 0.5px;
+}
+
+/* Proceed to Pay CTA Button */
+.snackspot-checkout-btn {
+  width: 100%;
+  height: 58px;
+  background: var(--brand-blue);
+  border-radius: 18px;
+  color: #FFFFFF;
+  font-size: 1.25rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: var(--shadow-btn);
+}
+
+.snackspot-checkout-btn:hover {
+  background: var(--brand-blue-hover);
+}
+
+.snackspot-checkout-btn:disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   6. MODAL OVERLAYS (UPI Payment, Dispensing, Complete, Admin)
+   ========================================================================== */
+.kiosk-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: modal-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.kiosk-modal-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+/* Responsive adjustments for 1080p and smaller screens */
+@media (max-width: 1400px) {
+  .snackspot-6col-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .snackspot-cart-panel {
+    width: 350px;
+    min-width: 350px;
+  }
+}

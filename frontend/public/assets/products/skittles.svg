@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad_skittles" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BE185D" />
+      <stop offset="100%" stop-color="#9D174D" />
+    </linearGradient>
+    <linearGradient id="sheen_skittles" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
+    </linearGradient>
+    <filter id="shadow_skittles" x="-20%" y="-10%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Minimalist Platform Background -->
+  <rect width="240" height="240" rx="20" fill="#F8FAFC" />
+  <circle cx="120" cy="120" r="85" fill="#BE185D" opacity="0.08" />
+
+  <!-- Render Form Factor with Rich 3D Styling -->
+  <g filter="url(#shadow_skittles)">
+    
+      <!-- Snack Bag / Package Shape -->
+      <path d="M 64 62 L 176 62 Q 185 120 178 182 L 62 182 Q 55 120 64 62 Z" fill="url(#grad_skittles)" />
+      <!-- Crimped Top Seal -->
+      <path d="M 64 62 L 176 62" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="4 2" opacity="0.6"/>
+      <!-- Crimped Bottom Seal -->
+      <path d="M 62 182 L 178 182" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="4 2" opacity="0.6"/>
+      <!-- Specular Light Reflection -->
+      <path d="M 78 72 Q 120 90 162 75" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.3" fill="none"/>
+      <!-- Brand Oval Badge -->
+      <ellipse cx="120" cy="122" rx="46" ry="26" fill="#FFFFFF" />
+      <text x="120" y="127" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="900" fill="#BE185D" text-anchor="middle" letter-spacing="0.5">Skittles</text>
+      <text x="120" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="800" fill="#FFFFFF" text-anchor="middle">CRUNCHY</text>
+    
+  </g>
+</svg>

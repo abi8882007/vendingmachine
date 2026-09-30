@@ -1,0 +1,20 @@
+{
+  "name": "aerovend-kiosk-backend",
+  "version": "1.0.0",
+  "description": "Smart Vending Machine Kiosk 32-Slot Backend with Serial/ESP32 & SQLite WAL",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^11.8.1",
+    "serialport": "^13.0.0"
+  }
+}

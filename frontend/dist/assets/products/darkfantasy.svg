@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="100%" height="100%">
+      <defs>
+        <radialGradient id="df_bg" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#3F3F46" />
+          <stop offset="70%" stop-color="#18181B" />
+          <stop offset="100%" stop-color="#09090B" />
+        </radialGradient>
+        <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <g filter="url(#shadow)">
+        <rect x="35" y="65" width="130" height="90" rx="12" fill="url(#df_bg)" stroke="#EAB308" stroke-width="1.5" />
+        <text x="100" y="102" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="900" fill="#FDE047" text-anchor="middle">Dark Fantasy</text>
+        <text x="100" y="120" font-family="system-ui" font-size="8" font-weight="700" fill="#CA8A04" text-anchor="middle" letter-spacing="1">CHOCO FILLS</text>
+      </g>
+    </svg>
