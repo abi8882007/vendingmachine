@@ -272,6 +272,7 @@ export default function App() {
       {activeModal === 'PAYMENT' && currentOrder && (
         <PaymentModal
           orderData={currentOrder}
+          paymentEvent={lastMessage}
           onPaymentSuccess={handlePaymentSuccess}
           onClose={handleClosePayment}
         />

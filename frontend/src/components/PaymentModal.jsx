@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import QRCode from 'qrcode';
 import { X, Clock, Zap, Loader2, CheckCircle2 } from 'lucide-react';
 import { sounds } from '../utils/soundEffects';
 
 export default function PaymentModal({
   orderData,
+  paymentEvent,
   onPaymentSuccess,
   onClose
 }) {
@@ -14,12 +15,15 @@ export default function PaymentModal({
   const totalTimeout = payment?.timeoutSeconds || 60;
   const [secondsRemaining, setSecondsRemaining] = useState(totalTimeout);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
   const onCloseRef = useRef(onClose);
+  const onPaymentSuccessRef = useRef(onPaymentSuccess);
 
   useEffect(() => {
     onCloseRef.current = onClose;
-  }, [onClose]);
+    onPaymentSuccessRef.current = onPaymentSuccess;
+  }, [onClose, onPaymentSuccess]);
 
   const targetUpiId = payment?.upiId || 'abikrishnakb@okicici';
   const targetPayeeName = payment?.payeeName || 'Abi Krishna';
@@ -29,6 +33,57 @@ export default function PaymentModal({
   const upiPayload = payment?.qrPayload && payment.qrPayload.includes(targetUpiId)
     ? payment.qrPayload
     : `upi://pay?pa=${targetUpiId}&pn=${encodeURIComponent(targetPayeeName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`Order_${transactionId}`)}&tr=${transactionId}`;
+
+  // Helper to handle successful payment auto-detection
+  const handlePaymentConfirmed = useCallback(() => {
+    if (isPaymentConfirmed) return;
+    setIsPaymentConfirmed(true);
+    setIsProcessingPayment(true);
+    sounds.playPaymentSuccess();
+
+    setTimeout(() => {
+      onPaymentSuccessRef.current?.({
+        transactionId,
+        totalAmount,
+        items,
+        method: 'UPI'
+      });
+    }, 900);
+  }, [isPaymentConfirmed, transactionId, totalAmount, items]);
+
+  // 1. Real-Time WebSocket Event Detection
+  useEffect(() => {
+    if (!paymentEvent) return;
+    if (
+      paymentEvent.type === 'PAYMENT_RECEIVED' &&
+      paymentEvent.payload?.transaction_id === transactionId
+    ) {
+      console.log('[Kiosk Payment] ⚡ Auto-detected payment via WebSocket:', paymentEvent.payload);
+      handlePaymentConfirmed();
+    }
+  }, [paymentEvent, transactionId, handlePaymentConfirmed]);
+
+  // 2. Continuous High-Frequency Auto-Polling (1.2s intervals)
+  useEffect(() => {
+    if (isPaymentConfirmed || isExpired) return;
+
+    const pollStatus = async () => {
+      try {
+        const res = await fetch(`/api/payment/status/${transactionId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && data.transaction?.payment_status === 'PAID') {
+          console.log('[Kiosk Payment] ⚡ Auto-detected payment via status polling:', data.transaction);
+          handlePaymentConfirmed();
+        }
+      } catch (err) {
+        // Ignore network glitch during polling
+      }
+    };
+
+    const pollInterval = setInterval(pollStatus, 1200);
+    return () => clearInterval(pollInterval);
+  }, [transactionId, isPaymentConfirmed, isExpired, handlePaymentConfirmed]);
 
   // Generate crisp high-resolution UPI QR Code
   useEffect(() => {
@@ -54,6 +109,8 @@ export default function PaymentModal({
 
   // High-precision, drift-free Countdown Timer
   useEffect(() => {
+    if (isPaymentConfirmed) return;
+
     const startTime = Date.now();
     const endTime = startTime + totalTimeout * 1000;
 
@@ -77,9 +134,9 @@ export default function PaymentModal({
     }, 250);
 
     return () => clearInterval(timer);
-  }, [totalTimeout]);
+  }, [totalTimeout, isPaymentConfirmed]);
 
-  // Handle instant payment confirmation (Webhook simulation / trigger)
+  // Handle instant manual payment confirmation (Express Simulator trigger)
   const handleTriggerPayment = async () => {
     try {
       setIsProcessingPayment(true);
@@ -97,13 +154,7 @@ export default function PaymentModal({
 
       const data = await res.json();
       if (data.success) {
-        sounds.playPaymentSuccess();
-        onPaymentSuccess({
-          transactionId,
-          totalAmount,
-          items,
-          method: 'UPI'
-        });
+        handlePaymentConfirmed();
       } else {
         alert(`Payment error: ${data.message || data.error}`);
         setIsProcessingPayment(false);
@@ -237,16 +288,18 @@ export default function PaymentModal({
           {/* Amount Box */}
           <div style={{
             width: '100%',
-            background: '#F1F6FD',
+            background: isPaymentConfirmed ? '#ECFDF5' : '#F1F6FD',
+            border: isPaymentConfirmed ? '1.5px solid #10B981' : '1px solid transparent',
             borderRadius: '16px',
             padding: '14px 20px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            transition: 'all 0.3s ease'
           }}>
             <div>
-              <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>Amount to Pay</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0F172A' }}>
+              <div style={{ fontSize: '0.85rem', color: isPaymentConfirmed ? '#047857' : '#64748B', fontWeight: 600 }}>Amount to Pay</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: isPaymentConfirmed ? '#065F46' : '#0F172A' }}>
                 ₹{totalAmount}
               </div>
             </div>
@@ -255,16 +308,43 @@ export default function PaymentModal({
               alignItems: 'center',
               gap: '6px',
               fontSize: '0.85rem',
-              color: secondsRemaining <= 10 ? '#EF4444' : secondsRemaining <= 20 ? '#D97706' : '#0066FF',
+              color: isPaymentConfirmed ? '#059669' : (secondsRemaining <= 10 ? '#EF4444' : secondsRemaining <= 20 ? '#D97706' : '#0066FF'),
               fontWeight: 700,
               padding: '6px 12px',
               borderRadius: '10px',
-              background: secondsRemaining <= 10 ? '#FEE2E2' : secondsRemaining <= 20 ? '#FEF3C7' : '#EFF6FF',
+              background: isPaymentConfirmed ? '#D1FAE5' : (secondsRemaining <= 10 ? '#FEE2E2' : secondsRemaining <= 20 ? '#FEF3C7' : '#EFF6FF'),
               transition: 'all 0.25s ease'
             }}>
-              <Clock size={16} />
-              <span>{isExpired ? 'Expired' : `${secondsRemaining}s remaining`}</span>
+              {isPaymentConfirmed ? <CheckCircle2 size={16} /> : <Clock size={16} />}
+              <span>{isPaymentConfirmed ? 'PAID' : isExpired ? 'Expired' : `${secondsRemaining}s remaining`}</span>
             </div>
+          </div>
+
+          {/* Live Auto-Detection Status Indicator */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.82rem',
+            color: isPaymentConfirmed ? '#059669' : '#0284C7',
+            fontWeight: 700,
+            background: isPaymentConfirmed ? '#ECFDF5' : '#F0F9FF',
+            border: isPaymentConfirmed ? '1px solid #A7F3D0' : '1px solid #BAE6FD',
+            padding: '6px 14px',
+            borderRadius: '9999px'
+          }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: isPaymentConfirmed ? '#10B981' : '#0284C7',
+              boxShadow: isPaymentConfirmed ? '0 0 10px #10B981' : '0 0 8px #0284C7'
+            }} />
+            <span>
+              {isPaymentConfirmed
+                ? '⚡ Payment Detected! Dispensing items immediately...'
+                : '🟢 Auto-Detection Active: Listening for live UPI credit...'}
+            </span>
           </div>
 
           {/* Supported Apps Pills */}
@@ -321,7 +401,7 @@ export default function PaymentModal({
             style={{
               flex: 1,
               height: '52px',
-              background: '#0066FF',
+              background: isPaymentConfirmed ? '#10B981' : '#0066FF',
               border: 'none',
               borderRadius: '14px',
               color: '#FFFFFF',
@@ -331,10 +411,16 @@ export default function PaymentModal({
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              boxShadow: '0 4px 14px rgba(0, 102, 255, 0.3)'
+              boxShadow: isPaymentConfirmed ? '0 4px 14px rgba(16, 185, 129, 0.4)' : '0 4px 14px rgba(0, 102, 255, 0.3)',
+              transition: 'background-color 0.3s ease'
             }}
           >
-            {isProcessingPayment ? (
+            {isPaymentConfirmed ? (
+              <>
+                <CheckCircle2 size={20} />
+                <span>Payment Verified! Dispensing...</span>
+              </>
+            ) : isProcessingPayment ? (
               <>
                 <Loader2 size={20} className="animate-spin" />
                 <span>Verifying UPI Payment...</span>
